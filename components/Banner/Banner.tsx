@@ -1,7 +1,7 @@
 
 import React from "react";
 import Slider from "./Slider";
-import SideBar from "./Sidebar";
+import SideBar from "../Sidebar";
 
 
 const Banner = () => {

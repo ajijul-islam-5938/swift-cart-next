@@ -1,9 +1,12 @@
-import Banner from "@/components/Banner";
+import Banner from "@/components/Banner/Banner";
+
+import TodaySell from "@/components/TodaySell/TodaySell";
 
 export default function Home() {
   return (
-    <section className="flex flex-col items-center justify-center gap-4">
+    <section className="">
       <Banner />
+      <TodaySell />
     </section>
   );
 }

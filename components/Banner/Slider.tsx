@@ -7,9 +7,13 @@ import Image from "next/image";
 const Slider = () => {
   const [currentSlide, setCurrentSlide] = React.useState(0);
   const [loaded, setLoaded] = useState(false);
-  const [sliderRef, instanceRef] = useKeenSlider<HTMLDivElement>(
-    { loop: true },
+  const [sliderRef, instanceRef] = useKeenSlider(
     {
+      loop: true,
+      slides: {
+        perView: 1,
+        spacing: 20,
+      },
       initial: 0,
       slideChanged(slider) {
         setCurrentSlide(slider.track.details.rel);
@@ -17,11 +21,41 @@ const Slider = () => {
       created() {
         setLoaded(true);
       },
-    }
+    },
+    [
+      slider => {
+        let timeout;
+        let mouseOver = false;
+        function clearNextTimeout() {
+          clearTimeout(timeout);
+        }
+        function nextTimeout() {
+          clearTimeout(timeout);
+          if (mouseOver) return;
+          timeout = setTimeout(() => {
+            slider.next();
+          }, 2000);
+        }
+        slider.on("created", () => {
+          slider.container.addEventListener("mouseover", () => {
+            mouseOver = true;
+            clearNextTimeout();
+          });
+          slider.container.addEventListener("mouseout", () => {
+            mouseOver = false;
+            nextTimeout();
+          });
+          nextTimeout();
+        });
+        slider.on("dragStarted", clearNextTimeout);
+        slider.on("animationEnded", nextTimeout);
+        slider.on("updated", nextTimeout);
+      },
+    ],
   );
 
   return (
-    <div className="overflow-hidden w-full">
+    <div className="overflow-hidden w-full relative">
       <div className="navigation-wrapper overflow-hidden">
         <div ref={sliderRef} className="keen-slider">
           <div className="keen-slider__slide number-slide1">
@@ -62,23 +96,6 @@ const Slider = () => {
           </div>
         </div>
       </div>
-      {loaded && instanceRef.current && (
-        <div className="dots">
-          {[
-            ...Array(instanceRef.current.track.details.slides.length).keys(),
-          ].map(idx => {
-            return (
-              <button
-                key={idx}
-                onClick={() => {
-                  instanceRef.current?.moveToIdx(idx);
-                }}
-                className={"dot" + (currentSlide === idx ? " active" : "")}
-              ></button>
-            );
-          })}
-        </div>
-      )}
     </div>
   );
 };
