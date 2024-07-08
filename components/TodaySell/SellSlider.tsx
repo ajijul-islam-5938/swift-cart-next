@@ -13,7 +13,7 @@ const SellSlider = () => {
     {
       loop: true,
       slides: {
-        perView: 4,
+        perView : 2,
         spacing: 20,
       },
       initial: 0,
@@ -22,6 +22,14 @@ const SellSlider = () => {
       },
       created() {
         setLoaded(true);
+      },
+      breakpoints: {
+        "(min-width: 400px)": {
+          slides: { perView: 3, spacing: 8 },
+        },
+        "(min-width: 1000px)": {
+          slides: { perView: 4, spacing: 10 },
+        },
       },
     },
     [
